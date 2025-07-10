@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Home - City Minute</title>
+    <meta name="description" content="Get your City info wrapped up into a podcast format">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli&amp;display=swap">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/simple-line-icons.min.css">
+    <link rel="stylesheet" href="assets/css/3D-animated-text-on-hover-3D-animated-text-on-hover-1.css">
+    <link rel="stylesheet" href="assets/css/3D-animated-text-on-hover.css">
+    <link rel="stylesheet" href="assets/css/Animated-Type-Heading-BS5.css">
+</head>
+
+<body id="page-top" data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="56">
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+        <div class="container"><a class="navbar-brand" href="#page-top" style="font-family: Lato, sans-serif;font-weight: bold;">City Minute</a><button data-bs-toggle="collapse" data-bs-target="#navbarResponsive" class="navbar-toggler float-end" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-bars"></i></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="masthead" style="background: url('assets/img/bg-pattern.png'), linear-gradient(to left, #7b4397, #dc2430);margin-bottom: -538px;">
+        <h1 style="color: var(--bs-danger);background: var(--bs-focus-ring-color);height: 530px;margin-top: -485px;">City Minute</h1>
+    </header>
+    <main style="background: url(&quot;assets/img/bg-pattern.png&quot;), linear-gradient(to left, #7b4397, #dc2430);">
+        <div class="container" style="margin-bottom: 191px;"><!-- Start: ElevenLabs TTS Section -->
+<section id="tts-section" class="py-5 gradient-bg text-center position-relative overflow-hidden">
+  <div class="container">
+    <h2 class="display-5 fw-bold text-white mb-4">Generate a Podcast</h2>
+
+    <!-- API Key Field -->
+    <div class="input-group mb-3 shadow">
+      <span class="input-group-text bg-warning text-dark fw-semibold">
+        <i class="bi bi-key"></i>&nbsp;API&nbsp;Key
+      </span>
+      <input type="password" id="apiKey" class="form-control" placeholder="Your ElevenLabs API key" aria-label="ElevenLabs API Key">
+    </div>
+
+    <!-- Text Input Field -->
+    <div class="input-group mb-4 shadow">
+      <span class="input-group-text bg-warning text-dark fw-semibold">
+        <i class="bi bi-chat-text"></i>&nbsp;Text
+      </span>
+      <input type="text" id="textInput" class="form-control" placeholder="Type something to synthesize" aria-label="Text to speech">
+    </div>
+
+    <!-- Play Button -->
+    <button id="playBtn" class="btn btn-danger btn-lg rounded-pill px-5 shadow-sm">
+      <i class="bi bi-play-fill"></i> Play
+    </button>
+
+    <!-- Audio Element (hidden until audio is loaded) -->
+    <audio id="audio" class="mt-4 w-100" controls hidden></audio>
+  </div>
+</section>
+
+<!-- Optional: Include Bootstrap Icons if not already loaded -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+  /* Gradient + subtle cube overlay to match hero banner */
+  .gradient-bg {
+    background: linear-gradient(135deg, #ff2c63 0%, #ff1e5a 25%, #c02c8f 50%, #8030bb 75%, #4045f4 100%);
+  }
+  .gradient-bg::before {
+    /* light cube pattern overlay (SVG data URI) */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='92' viewBox='0 0 80 92' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.1' stroke-width='1'%3E%3Cpath d='M40 0l40 23v46L40 92 0 69V23z'/%3E%3Cpath d='M0 23l40 23 40-23'/%3E%3Cpath d='M40 92V69'/%3E%3Cpath d='M80 69L40 46 0 69'/%3E%3Cpath d='M80 23L40 46 0 23'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 120px auto;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  // Basic ElevenLabs streaming TTS fetch helper
+  document.getElementById('playBtn').addEventListener('click', async () => {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const text = document.getElementById('textInput').value.trim();
+
+    if (!apiKey || !text) {
+      alert('Please enter both an API key and some text.');
+      return;
+    }
+
+    const voiceId = '21m00Tcm4TlvDq8ikWAM'; // "Rachel" – change to any voice in your library
+    const endpoint = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'xi-api-key': apiKey,
+          'Accept': 'audio/mpeg'
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: {
+            stability: 0.4,
+            similarity_boost: 0.75
+          }
+        })
+      });
+
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+      const blob = await response.blob();
+      const audioURL = URL.createObjectURL(blob);
+      const audioEl = document.getElementById('audio');
+      audioEl.src = audioURL;
+      audioEl.hidden = false;
+      await audioEl.play();
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  });
+</script>
+<!-- End: ElevenLabs TTS Section -->
+</div>
+    </main>
+    <section class="text-center bg-primary download" id="download">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <h2 class="section-heading">Discover what all the buzz is about!</h2>
+                    <p>Our app is available on any mobile device! Download now to get started!</p>
+                    <div class="badges"><a class="badge-link" href="#"><img src="assets/img/google-play-badge.svg"></a><a class="badge-link" href="#"><img src="assets/img/app-store-badge.svg"></a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="features" class="features">
+        <div class="container">
+            <div class="text-center section-heading">
+                <h2>Unlimited Features, Unlimited Fun</h2>
+                <p class="text-muted">Check out what you can do with this app theme!</p>
+                <hr>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 my-auto">
+                    <div class="device-container">
+                        <div class="device-mockup iphone6_plus portrait">
+                            <div class="device" style="background-image:url('assets/img/iphone_6_plus_white_port.png');">
+                                <div class="screen"><img class="img-fluid" src="assets/img/demo-screen-1.jpg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8 my-auto">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="feature-item"><i class="icon-screen-smartphone text-primary"></i>
+                                    <h3>Device Mockups</h3>
+                                    <p class="text-muted">Put an image, video, animation, or anything else in the screen!</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="feature-item"><i class="icon-camera text-primary"></i>
+                                    <h3>Flexible Use</h3>
+                                    <p class="text-muted">Put an image, video, animation, or anything else in the screen!</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="feature-item"><i class="icon-present text-primary"></i>
+                                    <h3>Free to Use</h3>
+                                    <p class="text-muted">As always, this theme is free to download and use for any purpose!</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="feature-item"><i class="icon-lock-open text-primary"></i>
+                                    <h3>Open Source</h3>
+                                    <p class="text-muted">Since this theme is MIT licensed, you can use it commercially!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="bg-primary contact" id="contact">
+        <div class="container">
+            <h2><span>We&nbsp;</span><i class="fa fa-heart"></i><span>&nbsp;new friends!</span></h2>
+            <ul class="list-inline list-social">
+                <li class="list-inline-item social-twitter"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                <li class="list-inline-item social-facebook"><a href="#"><i class="fa fa-facebook"></i></a></li>
+                <li class="list-inline-item social-google-plus"><a href="#"><i class="fa fa-google-plus"></i></a></li>
+            </ul>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>©&nbsp;City Minute 2025. All Rights Reserved.</p>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a href="#">Privacy</a></li>
+                <li class="list-inline-item"><a href="#">Terms</a></li>
+                <li class="list-inline-item"><a href="#">FAQ</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/3D-animated-text-on-hover.js"></script>
+    <script src="assets/js/Animated-Type-Heading-BS5-Animated-Type-Heading.js"></script>
+    <script src="assets/js/new-age.js"></script>
+</body>
+
+</html>

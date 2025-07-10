@@ -1,0 +1,27 @@
+h1 {
+  background-color: #677176;
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%);
+  margin: 0;
+  width: 100vw;
+  height: 700px;
+  font: 900 120px/1 'Source Sans Pro', Arial, sans-serif;
+  text-transform: uppercase;
+  line-height: 900px;
+  white-space: nowrap;
+  color: #fff;
+  text-align: center;
+  letter-spacing: -3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  --x-dist: 5px;
+  --y-dist: 7px;
+  --bg-dist: 10px;
+  text-shadow: calc(var(--x, var(--x-dist))*.1) calc(var(--y, var(--y-dist))*.1) 0 hsl(174,5%,80%), calc(var(--x, var(--x-dist))*.2) calc(var(--y, var(--y-dist))*.2) 0 hsl(174,5%,75%), calc(var(--x, var(--x-dist))*.3) calc(var(--y, var(--y-dist))*.3) 0 hsl(174,5%,70%), calc(var(--x, var(--x-dist))*.4) calc(var(--y, var(--y-dist))*.4) 0 hsl(174,5%,66%), calc(var(--x, var(--x-dist))*.5) calc(var(--y, var(--y-dist))*.5) 0 hsl(174,5%,64%), calc(var(--x, var(--x-dist))*.6) calc(var(--y, var(--y-dist))*.6) 0 hsl(174,5%,62%), calc(var(--x, var(--x-dist))*.7) calc(var(--y, var(--y-dist))*.7) 0 hsl(174,5%,61%), calc(var(--x, var(--x-dist))*.8) calc(var(--y, var(--y-dist))*.8) 0 hsl(174,5%,60%), calc(var(--x, var(--x-dist))*.9) calc(var(--y, var(--y-dist))*.9) 0 hsl(174,5%,62%), calc(var(--x, var(--x-dist))*1.0) calc(var(--y, var(--y-dist))*1) 0 hsl(174,5%,61%), var(--x, 0) calc(var(--y, var(--bg-dist)) * .5) var(--bg-dist) rgba(0,0,0,.2), var(--x, 0) var(--y, var(--bg-dist)) var(--bg-dist) rgba(0,0,0,.2), var(--x, 0) calc(var(--y, var(--bg-dist)) * 2) calc(var(--bg-dist) * 2) rgba(0,0,0,.3);
+}
+
