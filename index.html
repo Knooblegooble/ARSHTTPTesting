@@ -24,11 +24,11 @@
             <section class="text-center py-5 gradient-bg position-relative overflow-hidden" id="audio-section">
                 <div class="container">
                     <h2 class="display-5 fw-bold text-white mb-4">Your Podcast Audio Files</h2>
-                    <div class="input-group shadow mb-3"><input class="form-control form-control" type="file" accept=".mp3" aria-label="Choose MP3 to upload" id="fileInput"><button class="btn btn-success fw-semibold" id="uploadBtn"><i class="bi bi-upload"></i>&nbsp;Upload </button></div>
+                    <div class="input-group shadow mb-3"><input class="form-control form-control" type="file" id="fileInput" accept=".mp3, .wav" aria-label="Choose MP3 to upload"><button class="btn btn-success fw-semibold" id="uploadBtn"><i class="bi bi-upload"></i>&nbsp;Upload </button></div>
                     <ul class="list-group text-start shadow-sm mb-4" id="fileList"></ul><audio id="audioPlayer" class="mt-3 w-100" controls="" hidden=""></audio>
                 </div>
             </section><script>
-  const apiBase = 'https://arstesting.onrender.com'; // leave empty for same-origin, or set to your API URL
+  const apiBase = 'https://arstesting.onrender.com';
 
   // Fetch and render the list of files
   async function refreshFileList() {
@@ -63,17 +63,18 @@
     }
   }
 
-  // Handle upload
+  // Handle upload (.mp3 or .wav)
   document.getElementById('uploadBtn').addEventListener('click', async () => {
     const fileInput = document.getElementById('fileInput');
     if (!fileInput.files.length) {
-      alert('Please select an MP3 to upload.');
+      alert('Please select an audio file to upload.');
       return;
     }
 
     const file = fileInput.files[0];
-    if (file.type !== 'audio/mpeg') {
-      alert('Only MP3 files are allowed.');
+    const allowed = ['audio/mpeg', 'audio/wav'];
+    if (!allowed.includes(file.type)) {
+      alert('Only MP3 and WAV files are allowed.');
       return;
     }
 
@@ -96,7 +97,7 @@
 
   // Delegate play and delete buttons
   document.getElementById('fileList').addEventListener('click', async e => {
-    const playFile = e.target.closest('[data-play]')?.dataset.play;
+    const playFile   = e.target.closest('[data-play]')?.dataset.play;
     const deleteFile = e.target.closest('[data-delete]')?.dataset.delete;
 
     if (playFile) {
@@ -124,6 +125,7 @@
   // Initial load
   document.addEventListener('DOMContentLoaded', refreshFileList);
 </script>
+
         </div>
     </main>
     <section class="bg-primary contact" id="contact">
