@@ -20,196 +20,292 @@
     pre {
       white-space: pre-wrap;
     }
+    .dialogue-entry {
+      background: #f8f9fa;
+    }
   </style>
 </head>
 <body>
-<div class="container my-4">
-  <h1 class="text-center mb-4">ARS Endpoint Tester</h1>
+  <div class="container my-4">
+    <h1 class="text-center mb-4">ARS Endpoint Tester</h1>
 
-  <div class="mb-4">
-    <label for="apiBase" class="form-label">API Base URL</label>
-    <input id="apiBase" type="text" class="form-control" value="https://arstesting.onrender.com">
+    <div class="mb-4">
+      <label for="apiBase" class="form-label">API Base URL</label>
+      <input id="apiBase" type="text" class="form-control" value="https://arstesting.onrender.com">
+    </div>
+
+    <!-- Audio Files -->
+    <section id="audio-section">
+      <h2 class="h4">Audio Storage <small class="text-muted">(/audio-files)</small></h2>
+      <div class="input-group mb-3">
+        <input type="file" id="fileInput" class="form-control" accept=".mp3,.wav">
+        <button id="uploadBtn" class="btn btn-success">
+          <i class="bi bi-upload"></i> Upload
+        </button>
+      </div>
+      <ul id="fileList" class="list-group mb-3"></ul>
+      <audio id="audioPlayer" class="w-100" controls hidden></audio>
+    </section>
+
+    <!-- Dialogue Builder -->
+    <section id="dialogue-section">
+      <h2 class="h4">Text to Dialogue <small class="text-muted">(/dialogue)</small></h2>
+
+      <!-- dynamic list of turns -->
+      <div id="dialogueEntries"></div>
+
+      <div class="mb-3">
+        <button id="addTurnBtn" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-plus-lg"></i> Add Turn
+        </button>
+      </div>
+
+      <button id="dlgBtn" class="btn btn-primary mb-2">
+        <i class="bi bi-play-circle"></i> Generate Dialogue
+      </button>
+      <audio id="dlgPlayer" class="w-100" controls hidden></audio>
+    </section>
+
+    <!-- Latest Post -->
+    <section id="latest-section">
+      <h2 class="h4">Latest STL City SC Post <small class="text-muted">(/stlcitysc/latest-post)</small></h2>
+      <button id="fetchLatestBtn" class="btn btn-info mb-2">
+        <i class="bi bi-newspaper"></i> Fetch Latest
+      </button>
+      <pre id="latestPost" class="border rounded p-3" style="max-height:200px; overflow:auto;"></pre>
+    </section>
+
+    <!-- Podcast Script -->
+    <section id="podcast-section">
+      <h2 class="h4">Podcast Script <small class="text-muted">(/stlcitysc/generate-script)</small></h2>
+      <button id="generateScriptBtn" class="btn btn-info mb-2">
+        <i class="bi bi-mic"></i> Generate Script
+      </button>
+      <pre id="podcastScript" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
+    </section>
+
+    <!-- ChatGPT -->
+    <section id="chat-section">
+      <h2 class="h4">ChatGPT <small class="text-muted">(/chat)</small></h2>
+      <textarea id="chatPrompt" class="form-control mb-2" rows="3" placeholder="Enter a prompt…"></textarea>
+      <div class="row g-2 mb-2">
+        <div class="col-auto">
+          <label class="form-label">Temp</label>
+          <input type="number" id="optTemp" class="form-control" min="0" max="1" step="0.1" value="0.7">
+        </div>
+        <div class="col-auto">
+          <label class="form-label">Max Tokens</label>
+          <input type="number" id="optMax" class="form-control" min="10" max="1000" value="300">
+        </div>
+      </div>
+      <button id="sendChatBtn" class="btn btn-primary mb-2">
+        <i class="bi bi-chat-dots"></i> Send
+      </button>
+      <pre id="chatReply" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
+    </section>
   </div>
 
-  <!-- Audio Files -->
-  <section id="audio-section">
-    <h2 class="h4">Audio Storage <small class="text-muted">(/audio-files)</small></h2>
-    <div class="input-group mb-3">
-      <input type="file" id="fileInput" class="form-control" accept=".mp3,.wav">
-      <button id="uploadBtn" class="btn btn-success"><i class="bi bi-upload"></i> Upload</button>
-    </div>
-    <ul id="fileList" class="list-group mb-3"></ul>
-    <audio id="audioPlayer" class="w-100" controls hidden></audio>
-  </section>
+  <script>
+  (function(){
+    const apiInput = document.getElementById('apiBase');
+    const apiBase = () => apiInput.value.replace(/\/+$/, '');
 
-  <!-- ElevenLabs Dialogue -->
-  <section id="dialogue-section">
-    <h2 class="h4">Text to Dialogue <small class="text-muted">(/dialogue)</small></h2>
-    <div class="mb-2">
-      <label class="form-label">Text</label>
-      <textarea id="dlgText" class="form-control" rows="2"></textarea>
-    </div>
-    <div class="mb-2">
-      <label class="form-label">Voice ID</label>
-      <input id="dlgVoice" type="text" class="form-control" placeholder="voice ID">
-    </div>
-    <button id="dlgBtn" class="btn btn-primary mb-2"><i class="bi bi-play-circle"></i> Generate</button>
-    <audio id="dlgPlayer" class="w-100" controls hidden></audio>
-  </section>
-
-  <!-- Latest Post -->
-  <section id="latest-section">
-    <h2 class="h4">Latest STL City SC Post <small class="text-muted">(/stlcitysc/latest-post)</small></h2>
-    <button id="fetchLatestBtn" class="btn btn-info mb-2"><i class="bi bi-newspaper"></i> Fetch Latest</button>
-    <pre id="latestPost" class="border rounded p-3" style="max-height:200px; overflow:auto;"></pre>
-  </section>
-
-  <!-- ChatGPT -->
-  <section id="chat-section">
-    <h2 class="h4">ChatGPT <small class="text-muted">(/chat)</small></h2>
-    <textarea id="chatPrompt" class="form-control mb-2" rows="3" placeholder="Enter a prompt…"></textarea>
-    <div class="row g-2 mb-2">
-      <div class="col-auto">
-        <label class="form-label">Temp</label>
-        <input type="number" id="optTemp" class="form-control" min="0" max="1" step="0.1" value="0.7">
-      </div>
-      <div class="col-auto">
-        <label class="form-label">Max Tokens</label>
-        <input type="number" id="optMax" class="form-control" min="10" max="1000" value="300">
-      </div>
-    </div>
-    <button id="sendChatBtn" class="btn btn-primary mb-2"><i class="bi bi-chat-dots"></i> Send</button>
-    <pre id="chatReply" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
-  </section>
-
-</div>
-
-<script>
-(function(){
-  const apiInput = document.getElementById('apiBase');
-  const apiBase = () => apiInput.value.replace(/\/+$/, '');
-
-  // Audio Files
-  async function refreshFiles(){
-    const list = document.getElementById('fileList');
-    list.innerHTML = '<li class="list-group-item">Loading…</li>';
-    try {
-      const res = await fetch(`${apiBase()}/audio-files`);
-      const files = await res.json();
-      if (!files.length) { list.innerHTML = '<li class="list-group-item">No files.</li>'; return; }
-      list.innerHTML = files.map(f => `
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <span>${f.fileName}</span>
-          <div>
-            <button class="btn btn-sm btn-primary me-2" data-play="${f.fileName}"><i class="bi bi-play-fill"></i></button>
-            <button class="btn btn-sm btn-danger" data-delete="${f.fileName}"><i class="bi bi-trash"></i></button>
-          </div>
-        </li>
-      `).join('');
-    } catch(e){
-      list.innerHTML = `<li class="list-group-item text-danger">Error loading</li>`;
-    }
-  }
-
-  document.getElementById('uploadBtn').onclick = async () => {
-    const inp = document.getElementById('fileInput');
-    if (!inp.files.length) return alert('Select a file');
-    const file = inp.files[0];
-    const form = new FormData();
-    form.append('file', file);
-    try {
-      const res = await fetch(`${apiBase()}/audio-files`, { method:'POST', body:form });
-      if (!res.ok) throw new Error(res.statusText);
-      inp.value = '';
-      await refreshFiles();
-    } catch(e){
-      alert('Upload failed: '+e.message);
-    }
-  };
-
-  document.getElementById('fileList').onclick = async e => {
-    const play = e.target.closest('[data-play]')?.dataset.play;
-    const del  = e.target.closest('[data-delete]')?.dataset.delete;
-    if (play){
-      const p = document.getElementById('audioPlayer');
-      p.src = `${apiBase()}/audio-files/${encodeURIComponent(play)}`;
-      p.hidden = false;
-      p.play();
-    }
-    if (del && confirm(`Delete "${del}"?`)){
-      try{
-        const res = await fetch(`${apiBase()}/audio-files/${encodeURIComponent(del)}`, { method:'DELETE' });
-        if(!res.ok) throw new Error(res.statusText);
-        document.getElementById('audioPlayer').hidden = true;
-        await refreshFiles();
-      }catch(e){
-        alert('Delete failed: '+e.message);
+    // — Audio Files Handlers —
+    async function refreshFiles(){
+      const list = document.getElementById('fileList');
+      list.innerHTML = '<li class="list-group-item">Loading…</li>';
+      try {
+        const res = await fetch(`${apiBase()}/audio-files`);
+        const files = await res.json();
+        if (!files.length) {
+          list.innerHTML = '<li class="list-group-item">No files.</li>';
+          return;
+        }
+        list.innerHTML = files.map(f => `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>${f.fileName}</span>
+            <div>
+              <button class="btn btn-sm btn-primary me-2" data-play="${f.fileName}">
+                <i class="bi bi-play-fill"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" data-delete="${f.fileName}">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </li>
+        `).join('');
+      } catch(e){
+        list.innerHTML = `<li class="list-group-item text-danger">Error loading</li>`;
       }
     }
-  };
 
-  // Dialogue
-  document.getElementById('dlgBtn').onclick = async () => {
-    const text = document.getElementById('dlgText').value.trim();
-    const voice = document.getElementById('dlgVoice').value.trim();
-    if(!text || !voice) return alert('Provide text and voice id');
-    const out = document.getElementById('dlgPlayer');
-    out.hidden = true;
-    try {
-      const res = await fetch(`${apiBase()}/dialogue`, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ inputs:[{ text, voice_id: voice }] })
-      });
-      if(!res.ok) throw new Error(res.statusText);
-      const blob = await res.blob();
-      out.src = URL.createObjectURL(blob);
-      out.hidden = false;
-      out.play();
-    } catch(e){
-      alert('Dialogue failed: '+e.message);
+    document.getElementById('uploadBtn').onclick = async () => {
+      const inp = document.getElementById('fileInput');
+      if (!inp.files.length) return alert('Select a file');
+      const file = inp.files[0];
+      const form = new FormData();
+      form.append('file', file);
+      try {
+        const res = await fetch(`${apiBase()}/audio-files`, {
+          method: 'POST',
+          body: form
+        });
+        if (!res.ok) throw new Error(res.statusText);
+        inp.value = '';
+        await refreshFiles();
+      } catch(e){
+        alert('Upload failed: ' + e.message);
+      }
+    };
+
+    document.getElementById('fileList').onclick = async e => {
+      const play = e.target.closest('[data-play]')?.dataset.play;
+      const del  = e.target.closest('[data-delete]')?.dataset.delete;
+      if (play) {
+        const p = document.getElementById('audioPlayer');
+        p.src = `${apiBase()}/audio-files/${encodeURIComponent(play)}`;
+        p.hidden = false;
+        p.play();
+      }
+      if (del && confirm(`Delete "${del}"?`)) {
+        try {
+          const res = await fetch(`${apiBase()}/audio-files/${encodeURIComponent(del)}`, {
+            method: 'DELETE'
+          });
+          if (!res.ok) throw new Error(res.statusText);
+          document.getElementById('audioPlayer').hidden = true;
+          await refreshFiles();
+        } catch(e){
+          alert('Delete failed: ' + e.message);
+        }
+      }
+    };
+
+    // — Dialogue Builder Logic —
+    const entriesContainer = document.getElementById('dialogueEntries');
+    const addTurnBtn = document.getElementById('addTurnBtn');
+
+    function createTurnRow(text = '', voiceId = '') {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'dialogue-entry mb-3 p-3 border rounded';
+      wrapper.innerHTML = `
+        <div class="row g-2 align-items-end">
+          <div class="col">
+            <label class="form-label">Text</label>
+            <textarea class="form-control dlgText" rows="2">${text}</textarea>
+          </div>
+          <div class="col-auto">
+            <label class="form-label">Voice ID</label>
+            <input type="text" class="form-control dlgVoice" value="${voiceId}" placeholder="voice ID">
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-danger removeTurnBtn" title="Remove this turn">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      wrapper.querySelector('.removeTurnBtn')
+             .addEventListener('click', () => wrapper.remove());
+      return wrapper;
     }
-  };
 
-  // Latest Post
-  document.getElementById('fetchLatestBtn').onclick = async () => {
-    const out = document.getElementById('latestPost');
-    out.textContent = 'Loading…';
-    try{
-      const res = await fetch(`${apiBase()}/stlcitysc/latest-post`);
-      if(!res.ok) throw new Error(res.statusText);
-      const data = await res.json();
-      out.textContent = JSON.stringify(data,null,2);
-    }catch(e){
-      out.textContent = 'Error: '+e.message;
-    }
-  };
+    // initialize with two blank turns
+    entriesContainer.append(createTurnRow());
+    entriesContainer.append(createTurnRow());
 
-  // Chat
-  document.getElementById('sendChatBtn').onclick = async () => {
-    const prompt = document.getElementById('chatPrompt').value.trim();
-    if(!prompt) return alert('Enter a prompt');
-    const temp = parseFloat(document.getElementById('optTemp').value);
-    const maxT = parseInt(document.getElementById('optMax').value,10);
-    const out  = document.getElementById('chatReply');
-    out.textContent = 'Thinking…';
-    try {
-      const res = await fetch(`${apiBase()}/chat`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ prompt, options:{ temperature:temp, max_tokens:maxT } })
-      });
-      if(!res.ok) throw new Error(res.statusText);
-      const data = await res.json();
-      out.textContent = data.reply;
-    }catch(e){
-      out.textContent = 'Error: '+e.message;
-    }
-  };
+    addTurnBtn.addEventListener('click', () => {
+      entriesContainer.append(createTurnRow());
+    });
 
-  document.addEventListener('DOMContentLoaded', refreshFiles);
-})();
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    document.getElementById('dlgBtn').addEventListener('click', async () => {
+      const inputs = Array.from(entriesContainer.querySelectorAll('.dialogue-entry'))
+        .map(div => ({
+          text: div.querySelector('.dlgText').value.trim(),
+          voice_id: div.querySelector('.dlgVoice').value.trim()
+        }))
+        .filter(item => item.text && item.voice_id);
+
+      if (!inputs.length) {
+        return alert('Please fill in at least one turn with both text and voice ID.');
+      }
+
+      try {
+        const payload = { inputs };
+        const res = await fetch(`${apiBase()}/dialogue`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(res.statusText);
+
+        const blob = await res.blob();
+        const player = document.getElementById('dlgPlayer');
+        player.src = URL.createObjectURL(blob);
+        player.hidden = false;
+        player.play();
+      } catch (e) {
+        alert('Dialogue failed: ' + e.message);
+      }
+    });
+
+    // — Latest Post —
+    document.getElementById('fetchLatestBtn').onclick = async () => {
+      const out = document.getElementById('latestPost');
+      out.textContent = 'Loading…';
+      try {
+        const res = await fetch(`${apiBase()}/stlcitysc/latest-post`);
+        if (!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.textContent = 'Error: ' + e.message;
+      }
+    };
+
+    // — Podcast Script —
+    document.getElementById('generateScriptBtn').onclick = async () => {
+      const out = document.getElementById('podcastScript');
+      out.textContent = 'Loading…';
+      try {
+        const res = await fetch(`${apiBase()}/stlcitysc/generate-script`);
+        if (!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
+        out.textContent = data.script;
+      } catch (e) {
+        out.textContent = 'Error: ' + e.message;
+      }
+    };
+
+    // — ChatGPT —
+    document.getElementById('sendChatBtn').onclick = async () => {
+      const prompt = document.getElementById('chatPrompt').value.trim();
+      if (!prompt) return alert('Enter a prompt');
+      const temp = parseFloat(document.getElementById('optTemp').value);
+      const maxT = parseInt(document.getElementById('optMax').value, 10);
+      const out  = document.getElementById('chatReply');
+      out.textContent = 'Thinking…';
+      try {
+        const res = await fetch(`${apiBase()}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt,
+            options: { temperature: temp, max_tokens: maxT }
+          })
+        });
+        if (!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
+        out.textContent = data.reply;
+      } catch (e) {
+        out.textContent = 'Error: ' + e.message;
+      }
+    };
+
+    // initial load
+    document.addEventListener('DOMContentLoaded', refreshFiles);
+  })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
