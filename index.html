@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ARS Endpoint Tester</title>
+  <!-- Simple web UI for exercising the API endpoints provided by the server -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <style>
@@ -47,21 +48,101 @@
       <audio id="audioPlayer" class="w-100" controls hidden></audio>
     </section>
 
-    <!-- Dialogue Builder -->
+    <!-- Text to Speech -->
     <section id="dialogue-section">
-      <h2 class="h4">Text to Dialogue <small class="text-muted">(/dialogue)</small></h2>
+      <h2 class="h4">Text to Speech <small class="text-muted">(/dialogue)</small></h2>
 
-      <!-- dynamic list of turns -->
-      <div id="dialogueEntries"></div>
+      <div class="row g-2 mb-3">
+        <div class="col">
+          <label class="form-label">Speaker 1 Name</label>
+          <input id="speaker1Name" class="form-control" value="Speaker1">
+        </div>
+        <div class="col">
+          <label class="form-label">Speaker 1 Voice</label>
+          <select id="speaker1Voice" class="form-select">
+            <option>Zephyr</option>
+            <option>Puck</option>
+            <option>Charon</option>
+            <option>Kore</option>
+            <option>Fenrir</option>
+            <option>Leda</option>
+            <option>Orus</option>
+            <option>Aoede</option>
+            <option>Callirrhoe</option>
+            <option>Autonoe</option>
+            <option>Enceladus</option>
+            <option>Iapetus</option>
+            <option>Umbriel</option>
+            <option>Algieba</option>
+            <option>Despina</option>
+            <option>Erinome</option>
+            <option>Algenib</option>
+            <option>Rasalgethi</option>
+            <option>Laomedeia</option>
+            <option>Achernar</option>
+            <option>Alnilam</option>
+            <option>Schedar</option>
+            <option>Gacrux</option>
+            <option>Pulcherrima</option>
+            <option>Achird</option>
+            <option>Zubenelgenubi</option>
+            <option>Vindemiatrix</option>
+            <option>Sadachbia</option>
+            <option>Sadaltager</option>
+            <option>Sulafat</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row g-2 mb-3">
+        <div class="col">
+          <label class="form-label">Speaker 2 Name</label>
+          <input id="speaker2Name" class="form-control" value="Speaker2">
+        </div>
+        <div class="col">
+          <label class="form-label">Speaker 2 Voice</label>
+          <select id="speaker2Voice" class="form-select">
+            <option>Zephyr</option>
+            <option>Puck</option>
+            <option>Charon</option>
+            <option>Kore</option>
+            <option>Fenrir</option>
+            <option>Leda</option>
+            <option>Orus</option>
+            <option>Aoede</option>
+            <option>Callirrhoe</option>
+            <option>Autonoe</option>
+            <option>Enceladus</option>
+            <option>Iapetus</option>
+            <option>Umbriel</option>
+            <option>Algieba</option>
+            <option>Despina</option>
+            <option>Erinome</option>
+            <option>Algenib</option>
+            <option>Rasalgethi</option>
+            <option>Laomedeia</option>
+            <option>Achernar</option>
+            <option>Alnilam</option>
+            <option>Schedar</option>
+            <option>Gacrux</option>
+            <option>Pulcherrima</option>
+            <option>Achird</option>
+            <option>Zubenelgenubi</option>
+            <option>Vindemiatrix</option>
+            <option>Sadachbia</option>
+            <option>Sadaltager</option>
+            <option>Sulafat</option>
+          </select>
+        </div>
+      </div>
 
       <div class="mb-3">
-        <button id="addTurnBtn" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-plus-lg"></i> Add Turn
-        </button>
+        <label class="form-label">Prompt</label>
+        <textarea id="ttsPrompt" class="form-control" rows="3" placeholder="Enter text to speak..."></textarea>
       </div>
 
       <button id="dlgBtn" class="btn btn-primary mb-2">
-        <i class="bi bi-play-circle"></i> Generate Dialogue
+        <i class="bi bi-play-circle"></i> Speak
       </button>
       <audio id="dlgPlayer" class="w-100" controls hidden></audio>
     </section>
@@ -81,7 +162,25 @@
       <button id="generateScriptBtn" class="btn btn-info mb-2">
         <i class="bi bi-mic"></i> Generate Script
       </button>
-      <pre id="podcastScript" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
+    <pre id="podcastScript" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
+  </section>
+
+    <!-- Transcript Fetch -->
+    <section id="transcript-section">
+      <h2 class="h4">Transcript <small class="text-muted">(/transcripts/:fileName)</small></h2>
+      <div class="input-group mb-3">
+        <input id="transcriptFile" type="text" class="form-control" placeholder="audio file name">
+        <button id="getTranscriptBtn" class="btn btn-info">
+          <i class="bi bi-file-earmark-text"></i> Fetch Transcript
+        </button>
+      </div>
+      <div class="input-group mb-3">
+        <input id="localTranscriptFile" type="file" class="form-control" accept=".mp3,.wav">
+        <button id="uploadTranscriptBtn" class="btn btn-info">
+          <i class="bi bi-upload"></i> Transcribe File
+        </button>
+      </div>
+      <pre id="transcriptOut" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
     </section>
 
     <!-- ChatGPT -->
@@ -107,10 +206,13 @@
 
   <script>
   (function(){
+    // Front-end logic for interacting with the API. The functions below
+    // correspond to the various endpoints exposed by the server.
     const apiInput = document.getElementById('apiBase');
     const apiBase = () => apiInput.value.replace(/\/+$/, '');
 
     // — Audio Files Handlers —
+    // Fetch the list of uploaded audio files and render buttons
     async function refreshFiles(){
       const list = document.getElementById('fileList');
       list.innerHTML = '<li class="list-group-item">Loading…</li>';
@@ -181,62 +283,28 @@
       }
     };
 
-    // — Dialogue Builder Logic —
-    const entriesContainer = document.getElementById('dialogueEntries');
-    const addTurnBtn = document.getElementById('addTurnBtn');
+    // — Text to Speech Logic —
+    // Sends the prompt and selected voices to the /dialogue endpoint
+      document.getElementById('dlgBtn').addEventListener('click', async () => {
+        const prompt   = document.getElementById('ttsPrompt').value.trim();
+        const s1Name   = document.getElementById('speaker1Name').value.trim();
+        const s1Voice  = document.getElementById('speaker1Voice').value;
+        const s2Name   = document.getElementById('speaker2Name').value.trim();
+        const s2Voice  = document.getElementById('speaker2Voice').value;
+        if (!prompt) return alert('Enter a prompt');
 
-    function createTurnRow(text = '', voiceId = '') {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'dialogue-entry mb-3 p-3 border rounded';
-      wrapper.innerHTML = `
-        <div class="row g-2 align-items-end">
-          <div class="col">
-            <label class="form-label">Text</label>
-            <textarea class="form-control dlgText" rows="2">${text}</textarea>
-          </div>
-          <div class="col-auto">
-            <label class="form-label">Voice ID</label>
-            <input type="text" class="form-control dlgVoice" value="${voiceId}" placeholder="voice ID">
-          </div>
-          <div class="col-auto">
-            <button type="button" class="btn btn-danger removeTurnBtn" title="Remove this turn">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </div>
-      `;
-      wrapper.querySelector('.removeTurnBtn')
-             .addEventListener('click', () => wrapper.remove());
-      return wrapper;
-    }
-
-    // initialize with two blank turns
-    entriesContainer.append(createTurnRow());
-    entriesContainer.append(createTurnRow());
-
-    addTurnBtn.addEventListener('click', () => {
-      entriesContainer.append(createTurnRow());
-    });
-
-    document.getElementById('dlgBtn').addEventListener('click', async () => {
-      const inputs = Array.from(entriesContainer.querySelectorAll('.dialogue-entry'))
-        .map(div => ({
-          text: div.querySelector('.dlgText').value.trim(),
-          voice_id: div.querySelector('.dlgVoice').value.trim()
-        }))
-        .filter(item => item.text && item.voice_id);
-
-      if (!inputs.length) {
-        return alert('Please fill in at least one turn with both text and voice ID.');
-      }
-
-      try {
-        const payload = { inputs };
-        const res = await fetch(`${apiBase()}/dialogue`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        try {
+          const res = await fetch(`${apiBase()}/dialogue`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              prompt,
+              speaker1Name: s1Name,
+              speaker1Voice: s1Voice,
+              speaker2Name: s2Name,
+              speaker2Voice: s2Voice
+            })
+          });
         if (!res.ok) throw new Error(res.statusText);
 
         const blob = await res.blob();
@@ -245,11 +313,12 @@
         player.hidden = false;
         player.play();
       } catch (e) {
-        alert('Dialogue failed: ' + e.message);
+        alert('TTS failed: ' + e.message);
       }
     });
 
     // — Latest Post —
+    // Fetches the most recent STL City SC post via the proxy
     document.getElementById('fetchLatestBtn').onclick = async () => {
       const out = document.getElementById('latestPost');
       out.textContent = 'Loading…';
@@ -264,20 +333,61 @@
     };
 
     // — Podcast Script —
-    document.getElementById('generateScriptBtn').onclick = async () => {
-      const out = document.getElementById('podcastScript');
-      out.textContent = 'Loading…';
-      try {
-        const res = await fetch(`${apiBase()}/stlcitysc/generate-script`);
-        if (!res.ok) throw new Error(res.statusText);
-        const data = await res.json();
-        out.textContent = data.script;
-      } catch (e) {
-        out.textContent = 'Error: ' + e.message;
-      }
-    };
+    // Generates a short script summary using ChatGPT
+      document.getElementById('generateScriptBtn').onclick = async () => {
+        const out = document.getElementById('podcastScript');
+        out.textContent = 'Loading…';
+        try {
+          const res = await fetch(`${apiBase()}/stlcitysc/generate-script`);
+          if (!res.ok) throw new Error(res.statusText);
+          const data = await res.json();
+          out.textContent = data.script;
+        } catch (e) {
+          out.textContent = 'Error: ' + e.message;
+        }
+      };
+
+      // — Transcript Fetch —
+      // Retrieve an existing transcript for the given file name
+      document.getElementById('getTranscriptBtn').onclick = async () => {
+        const name = document.getElementById('transcriptFile').value.trim();
+        if (!name) return alert('Enter a file name');
+        const out = document.getElementById('transcriptOut');
+        out.textContent = 'Loading…';
+        try {
+          const res = await fetch(`${apiBase()}/transcripts/${encodeURIComponent(name)}`);
+          if (!res.ok) throw new Error(res.statusText);
+          const data = await res.json();
+          out.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+          out.textContent = 'Error: ' + e.message;
+        }
+      };
+
+      // Upload a local file and request a new transcript
+      document.getElementById('uploadTranscriptBtn').onclick = async () => {
+        const inp = document.getElementById('localTranscriptFile');
+        if (!inp.files.length) return alert('Select a file');
+        const file = inp.files[0];
+        const form = new FormData();
+        form.append('file', file);
+        const out = document.getElementById('transcriptOut');
+        out.textContent = 'Loading…';
+        try {
+          const res = await fetch(`${apiBase()}/transcripts`, {
+            method: 'POST',
+            body: form
+          });
+          if (!res.ok) throw new Error(res.statusText);
+          const data = await res.json();
+          out.textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+          out.textContent = 'Error: ' + e.message;
+        }
+      };
 
     // — ChatGPT —
+    // Send a free-form prompt to the /chat endpoint
     document.getElementById('sendChatBtn').onclick = async () => {
       const prompt = document.getElementById('chatPrompt').value.trim();
       if (!prompt) return alert('Enter a prompt');
@@ -302,7 +412,7 @@
       }
     };
 
-    // initial load
+    // initial load - display any existing audio files
     document.addEventListener('DOMContentLoaded', refreshFiles);
   })();
   </script>
