@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ARS Endpoint Tester</title>
+  <title>STL City SC Tools</title>
   <!-- Simple web UI for exercising the API endpoints provided by the server -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -28,126 +28,13 @@
 </head>
 <body>
   <div class="container my-4">
-    <h1 class="text-center mb-4">ARS Endpoint Tester</h1>
+    <h1 class="text-center mb-4">STL City SC Tools</h1>
 
     <div class="mb-4">
       <label for="apiBase" class="form-label">API Base URL</label>
       <input id="apiBase" type="text" class="form-control" value="https://arstesting.onrender.com">
     </div>
 
-    <!-- Audio Files -->
-    <section id="audio-section">
-      <h2 class="h4">Audio Storage <small class="text-muted">(/audio-files)</small></h2>
-      <div class="input-group mb-3">
-        <input type="file" id="fileInput" class="form-control" accept=".mp3,.wav">
-        <button id="uploadBtn" class="btn btn-success">
-          <i class="bi bi-upload"></i> Upload
-        </button>
-      </div>
-      <ul id="fileList" class="list-group mb-3"></ul>
-      <audio id="audioPlayer" class="w-100" controls hidden></audio>
-    </section>
-
-    <!-- Text to Speech -->
-    <section id="dialogue-section">
-      <h2 class="h4">Text to Speech <small class="text-muted">(/dialogue)</small></h2>
-
-      <div class="row g-2 mb-3">
-        <div class="col">
-          <label class="form-label">Speaker 1 Name</label>
-          <input id="speaker1Name" class="form-control" value="Speaker1">
-        </div>
-        <div class="col">
-          <label class="form-label">Speaker 1 Voice</label>
-          <select id="speaker1Voice" class="form-select">
-            <option>Zephyr</option>
-            <option>Puck</option>
-            <option>Charon</option>
-            <option>Kore</option>
-            <option>Fenrir</option>
-            <option>Leda</option>
-            <option>Orus</option>
-            <option>Aoede</option>
-            <option>Callirrhoe</option>
-            <option>Autonoe</option>
-            <option>Enceladus</option>
-            <option>Iapetus</option>
-            <option>Umbriel</option>
-            <option>Algieba</option>
-            <option>Despina</option>
-            <option>Erinome</option>
-            <option>Algenib</option>
-            <option>Rasalgethi</option>
-            <option>Laomedeia</option>
-            <option>Achernar</option>
-            <option>Alnilam</option>
-            <option>Schedar</option>
-            <option>Gacrux</option>
-            <option>Pulcherrima</option>
-            <option>Achird</option>
-            <option>Zubenelgenubi</option>
-            <option>Vindemiatrix</option>
-            <option>Sadachbia</option>
-            <option>Sadaltager</option>
-            <option>Sulafat</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row g-2 mb-3">
-        <div class="col">
-          <label class="form-label">Speaker 2 Name</label>
-          <input id="speaker2Name" class="form-control" value="Speaker2">
-        </div>
-        <div class="col">
-          <label class="form-label">Speaker 2 Voice</label>
-          <select id="speaker2Voice" class="form-select">
-            <option>Zephyr</option>
-            <option>Puck</option>
-            <option>Charon</option>
-            <option>Kore</option>
-            <option>Fenrir</option>
-            <option>Leda</option>
-            <option>Orus</option>
-            <option>Aoede</option>
-            <option>Callirrhoe</option>
-            <option>Autonoe</option>
-            <option>Enceladus</option>
-            <option>Iapetus</option>
-            <option>Umbriel</option>
-            <option>Algieba</option>
-            <option>Despina</option>
-            <option>Erinome</option>
-            <option>Algenib</option>
-            <option>Rasalgethi</option>
-            <option>Laomedeia</option>
-            <option>Achernar</option>
-            <option>Alnilam</option>
-            <option>Schedar</option>
-            <option>Gacrux</option>
-            <option>Pulcherrima</option>
-            <option>Achird</option>
-            <option>Zubenelgenubi</option>
-            <option>Vindemiatrix</option>
-            <option>Sadachbia</option>
-            <option>Sadaltager</option>
-            <option>Sulafat</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Prompt</label>
-        <textarea id="ttsPrompt" class="form-control" rows="3" placeholder="Enter text to speak..."></textarea>
-      </div>
-
-      <button id="dlgBtn" class="btn btn-primary mb-2">
-        <i class="bi bi-play-circle"></i> Speak
-      </button>
-      <audio id="dlgPlayer" class="w-100" controls hidden></audio>
-    </section>
-
-    <!-- Latest Post -->
     <section id="latest-section">
       <h2 class="h4">Latest STL City SC Post <small class="text-muted">(/stlcitysc/latest-post)</small></h2>
       <div class="input-group mb-2" style="max-width: 200px;">
@@ -159,8 +46,106 @@
       </button>
       <div id="latestPost" class="row g-2"></div>
     </section>
-
-    <!-- Podcast Script -->
+    <section id="episode-section">
+      <h2 class="h4">Generate Episode <small class="text-muted">(/stlcitysc/generate-episode)</small></h2>
+      <div class="mb-2">
+        <label class="form-label">Article IDs (comma or space separated)</label>
+        <input id="epArticleId" type="text" class="form-control">
+      </div>
+      <div class="row g-2 mb-3">
+        <div class="col">
+          <label class="form-label">Host A Name</label>
+          <input id="epHostAName" class="form-control" value="Kevin">
+        </div>
+        <div class="col">
+          <label class="form-label">Host A Voice</label>
+          <select id="epHostAVoice" class="form-select">
+            <option>Zephyr</option>
+            <option>Puck</option>
+            <option>Charon</option>
+            <option>Kore</option>
+            <option>Fenrir</option>
+            <option>Leda</option>
+            <option>Orus</option>
+            <option>Aoede</option>
+            <option>Callirrhoe</option>
+            <option>Autonoe</option>
+            <option>Enceladus</option>
+            <option>Iapetus</option>
+            <option>Umbriel</option>
+            <option>Algieba</option>
+            <option>Despina</option>
+            <option>Erinome</option>
+            <option>Algenib</option>
+            <option>Rasalgethi</option>
+            <option>Laomedeia</option>
+            <option>Achernar</option>
+            <option>Alnilam</option>
+            <option>Schedar</option>
+            <option>Gacrux</option>
+            <option>Pulcherrima</option>
+            <option>Achird</option>
+            <option>Zubenelgenubi</option>
+            <option>Vindemiatrix</option>
+            <option>Sadachbia</option>
+            <option>Sadaltager</option>
+            <option>Sulafat</option>
+          </select>
+        </div>
+      </div>
+      <div class="row g-2 mb-3">
+        <div class="col">
+          <label class="form-label">Host B Name</label>
+          <input id="epHostBName" class="form-control" value="Abby">
+        </div>
+        <div class="col">
+          <label class="form-label">Host B Voice</label>
+          <select id="epHostBVoice" class="form-select">
+            <option>Zephyr</option>
+            <option>Puck</option>
+            <option>Charon</option>
+            <option>Kore</option>
+            <option>Fenrir</option>
+            <option>Leda</option>
+            <option>Orus</option>
+            <option>Aoede</option>
+            <option>Callirrhoe</option>
+            <option>Autonoe</option>
+            <option>Enceladus</option>
+            <option>Iapetus</option>
+            <option>Umbriel</option>
+            <option>Algieba</option>
+            <option>Despina</option>
+            <option>Erinome</option>
+            <option>Algenib</option>
+            <option>Rasalgethi</option>
+            <option>Laomedeia</option>
+            <option>Achernar</option>
+            <option>Alnilam</option>
+            <option>Schedar</option>
+            <option>Gacrux</option>
+            <option>Pulcherrima</option>
+            <option>Achird</option>
+            <option>Zubenelgenubi</option>
+            <option>Vindemiatrix</option>
+            <option>Sadachbia</option>
+            <option>Sadaltager</option>
+          <option>Sulafat</option>
+        </select>
+      </div>
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Prompt Tweak</label>
+        <textarea id="epPromptTweak" class="form-control" rows="2" placeholder="Extra instructions for the model (optional)"></textarea>
+      </div>
+      <button id="generateEpisodeBtn" class="btn btn-info mb-2">
+        <i class="bi bi-broadcast"></i> Generate Episode
+      </button>
+      <audio id="episodePlayer" class="w-100 mb-2" controls hidden></audio>
+      <pre id="episodeScript" class="border rounded p-3 mb-2" style="max-height:300px; overflow:auto;"></pre>
+      <pre id="episodeTranscript" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
+    </section>
+    <h2 class="h4 mt-4">Toolbox</h2>
     <section id="podcast-section">
       <h2 class="h4">Podcast Script <small class="text-muted">(/stlcitysc/generate-script)</small></h2>
       <div class="mb-2">
@@ -297,22 +282,28 @@ Venue: Energizer Park
       </button>
       <pre id="podcastScript" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
     </section>
-
-    <!-- Episode Generation -->
-    <section id="episode-section">
-      <h2 class="h4">Generate Episode <small class="text-muted">(/stlcitysc/generate-episode)</small></h2>
-      <div class="mb-2">
-        <label class="form-label">Article IDs (comma or space separated)</label>
-        <input id="epArticleId" type="text" class="form-control">
+    <section id="audio-section">
+      <h2 class="h4">Audio Storage <small class="text-muted">(/audio-files)</small></h2>
+      <div class="input-group mb-3">
+        <input type="file" id="fileInput" class="form-control" accept=".mp3,.wav">
+        <button id="uploadBtn" class="btn btn-success">
+          <i class="bi bi-upload"></i> Upload
+        </button>
       </div>
+      <ul id="fileList" class="list-group mb-3"></ul>
+      <audio id="audioPlayer" class="w-100" controls hidden></audio>
+    </section>
+    <section id="dialogue-section">
+      <h2 class="h4">Text to Speech <small class="text-muted">(/dialogue)</small></h2>
+
       <div class="row g-2 mb-3">
         <div class="col">
-          <label class="form-label">Host A Name</label>
-          <input id="epHostAName" class="form-control" value="Kevin">
+          <label class="form-label">Speaker 1 Name</label>
+          <input id="speaker1Name" class="form-control" value="Speaker1">
         </div>
         <div class="col">
-          <label class="form-label">Host A Voice</label>
-          <select id="epHostAVoice" class="form-select">
+          <label class="form-label">Speaker 1 Voice</label>
+          <select id="speaker1Voice" class="form-select">
             <option>Zephyr</option>
             <option>Puck</option>
             <option>Charon</option>
@@ -346,14 +337,15 @@ Venue: Energizer Park
           </select>
         </div>
       </div>
+
       <div class="row g-2 mb-3">
         <div class="col">
-          <label class="form-label">Host B Name</label>
-          <input id="epHostBName" class="form-control" value="Abby">
+          <label class="form-label">Speaker 2 Name</label>
+          <input id="speaker2Name" class="form-control" value="Speaker2">
         </div>
         <div class="col">
-          <label class="form-label">Host B Voice</label>
-          <select id="epHostBVoice" class="form-select">
+          <label class="form-label">Speaker 2 Voice</label>
+          <select id="speaker2Voice" class="form-select">
             <option>Zephyr</option>
             <option>Puck</option>
             <option>Charon</option>
@@ -383,24 +375,21 @@ Venue: Energizer Park
             <option>Vindemiatrix</option>
             <option>Sadachbia</option>
             <option>Sadaltager</option>
-          <option>Sulafat</option>
-        </select>
+            <option>Sulafat</option>
+          </select>
+        </div>
       </div>
+
+      <div class="mb-3">
+        <label class="form-label">Prompt</label>
+        <textarea id="ttsPrompt" class="form-control" rows="3" placeholder="Enter text to speak..."></textarea>
       </div>
-      <div class="mb-2">
-        <label class="form-label">Prompt Tweak</label>
-        <textarea id="epPromptTweak" class="form-control" rows="2" placeholder="Extra instructions for the model (optional)"></textarea>
-      </div>
-      <button id="generateEpisodeBtn" class="btn btn-info mb-2">
-        <i class="bi bi-broadcast"></i> Generate Episode
+
+      <button id="dlgBtn" class="btn btn-primary mb-2">
+        <i class="bi bi-play-circle"></i> Speak
       </button>
-      <audio id="episodePlayer" class="w-100 mb-2" controls hidden></audio>
-      <pre id="episodeScript" class="border rounded p-3 mb-2" style="max-height:300px; overflow:auto;"></pre>
-      <pre id="episodeTranscript" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
+      <audio id="dlgPlayer" class="w-100" controls hidden></audio>
     </section>
-
-
-    <!-- Transcript Fetch -->
     <section id="transcript-section">
       <h2 class="h4">Transcript <small class="text-muted">(/transcripts/:fileName)</small></h2>
       <div class="input-group mb-3">
@@ -417,8 +406,6 @@ Venue: Energizer Park
       </div>
       <pre id="transcriptOut" class="border rounded p-3" style="max-height:300px; overflow:auto;"></pre>
     </section>
-
-    <!-- ChatGPT -->
     <section id="chat-section">
       <h2 class="h4">ChatGPT <small class="text-muted">(/chat)</small></h2>
       <textarea id="chatPrompt" class="form-control mb-2" rows="3" placeholder="Enter a prompt…"></textarea>
